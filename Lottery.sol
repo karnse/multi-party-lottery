@@ -22,18 +22,6 @@ contract Lottery is CommitReveal{
     uint public T2;
     uint public T3;
 
-    function checkCurrentState() public view returns(uint8){
-        if(startTime == 0||block.timestamp < startTime)  return 0;
-        if(block.timestamp < startTime + T1)
-            return 1;
-        if(block.timestamp < startTime + T1 + T2)
-            return 2;
-        if(block.timestamp < startTime + T1 + T2 + T3)
-            return 3;
-        else
-            return 4;
-    }
-
     constructor(uint _T1, uint _T2, uint _T3, uint _max_player) {
         T1 = _T1;
         T2 = _T2;
@@ -45,6 +33,18 @@ contract Lottery is CommitReveal{
     modifier onlyOwner() {
         require(msg.sender == owner);
         _;
+    }
+
+    function checkCurrentState() public view returns(uint8){
+        if(startTime == 0||block.timestamp < startTime)  return 0;
+        if(block.timestamp < startTime + T1)
+            return 1;
+        if(block.timestamp < startTime + T1 + T2)
+            return 2;
+        if(block.timestamp < startTime + T1 + T2 + T3)
+            return 3;
+        else
+            return 4;
     }
 
     function resetGame() internal {
