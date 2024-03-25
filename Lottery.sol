@@ -123,7 +123,7 @@ contract Lottery is CommitReveal{
         address payable playerAddress = payable(msg.sender);
         reward -= 0.001 ether;
         playerAddress.transfer(0.001 ether);
-        if(numPlayer==0)
+        if(reward==0)
             resetGame();
     }
 }
