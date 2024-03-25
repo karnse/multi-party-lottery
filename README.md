@@ -6,6 +6,7 @@
 struct Player {
     uint choice;
     address addr;
+    bool refunded;
 }
 mapping (uint => Player) public player;
 mapping (address => uint) public playerIndex;
@@ -118,6 +119,7 @@ function addPlayer(bytes32 hashedChoice) public payable {
     commit(hashedChoice);
     player[numPlayer].addr = msg.sender;
     player[numPlayer].choice = 1000;
+    player[numPlayer].refunded = false;
     playerIndex[msg.sender] = numPlayer;
     numPlayer++;
 }
@@ -181,10 +183,12 @@ function checkWinner() public payable onlyOwner{
 function refund() public payable {
     require(checkCurrentState()==4,"this round is not expire");
     require(msg.sender == player[playerIndex[msg.sender]].addr);
+    require(player[playerIndex[msg.sender]].refunded == false);
+    player[playerIndex[msg.sender]].refunded = true;
     address payable playerAddress = payable(msg.sender);
     reward -= 0.001 ether;
     playerAddress.transfer(0.001 ether);
-    if(numPlayer==0)
+    if(reward==0)
         resetGame();
 }
 ```
