@@ -87,8 +87,9 @@ contract Lottery is CommitReveal{
         player[playerIndex[msg.sender]].choice = lotteryNum;
     }
 
-    function checkWinner() public payable onlyOwner{
+    function checkWinner() public payable{
         require(checkCurrentState()==3,"not check winner stage");
+        require(reward != 0,"the reward is gone");
         uint numValidPlayer = 0;
         uint choiceXOR = 0;
         for(uint i = 0; i < numPlayer; i++){
@@ -114,8 +115,14 @@ contract Lottery is CommitReveal{
         }
         address payable ownerPayable = payable(owner);
         address payable winnerPayable = payable(winnerAddress);
-        ownerPayable.transfer(reward*2/100);
-        winnerPayable.transfer(reward*98/100);
+        address payable transactioner = payable(msg.sender);
+        uint ownerReward = reward*1/100;
+        uint transactionerReward = reward*1/100;
+        uint winnerReward = reward*98/100;
+        reward = 0;
+        ownerPayable.transfer(ownerReward);
+        transactioner.transfer(transactionerReward);
+        winnerPayable.transfer(winnerReward);
         resetGame();
     }
 
